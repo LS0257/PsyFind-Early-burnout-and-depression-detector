@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PsyFind - Early Burnout & Depression Detector</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent: #fbc2eb;
+            --text: #2d3748;
+            --bg: #f7fafc;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        /* Navigation */
+        nav { background: white; padding: 1rem 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-radius: 15px; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--secondary); display: flex; align-items: center; gap: 10px; }
+        .nav-links button { background: none; border: none; font-size: 1rem; color: #4a5568; cursor: pointer; margin-left: 20px; font-weight: 600; transition: color 0.3s; }
+        .nav-links button:hover { color: var(--primary); }
+        /* Pages */
+        .page { display: none; animation: fadeIn 0.6s ease-out; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* HERO SECTION */
+        .hero { text-align: center; padding: 3rem 1rem; background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(102, 126, 234, 0.1); margin-bottom: 2rem; }
+        .hero h1 { font-size: 3rem; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1rem; }
+        .hero p { font-size: 1.25rem; color: #718096; max-width: 700px; margin: 0 auto 2rem auto; }
+        .btn { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; padding: 12px 30px; border-radius: 50px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(118, 75, 162, 0.4); }
+        .btn-secondary { background: white; color: var(--secondary); border: 2px solid var(--secondary); }
+        .btn-secondary:hover { background: #f7fafc; }
+        /* FEATURES */
+        .features-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin: 3rem 0; }
+        .feature-card { background: white; padding: 2rem; border-radius: 15px; text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.05); transition: transform 0.3s; }
+        .feature-card:hover { transform: translateY(-5px); }
+        .feature-icon { font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem; }
+        .feature-card h3 { color: var(--secondary); margin-bottom: 0.5rem; }
+        .feature-card p { font-size: 0.95rem; color: #718096; }
+        /* FORM */
+        .form-card { background: white; padding: 2.5rem; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .form-group { margin-bottom: 1.5rem; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: #4a5568; }
+        input, select, textarea { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem; transition: border-color 0.3s; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); }
+        /* RESULTS */
+        .results-container { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+        @media(max-width: 768px) { .results-container { grid-template-columns: 1fr; } }
+        .status-card { background: white; padding: 2rem; border-radius: 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .status-badge { display: inline-block; padding: 10px 25px; border-radius: 50px; font-size: 1.5rem; font-weight: 800; margin: 1rem 0; }
+        .status-Both { background: #fed7d7; color: #c53030; }
+        .status-Burnout { background: #feebc8; color: #c05621; }
+        .status-Depression { background: #bee3f8; color: #2b6cb0; }
+        .status-Healthy { background: #c6f6d5; color: #2f855a; }
+        /* LLM ADVISOR STYLING - COHESIVE TEXT */
+        .advisor-card { background: linear-gradient(to bottom right, #ffffff, #f8faff); padding: 2.5rem; border-radius: 20px; border-left: 5px solid var(--primary); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .advisor-header { display: flex; align-items: center; gap: 15px; margin-bottom: 1.5rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1rem; }
+        .advisor-avatar { width: 50px; height: 50px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; }
+        .advisor-content p { margin-bottom: 1rem; font-size: 1.05rem; color: #4a5568; }
+        .advisor-content .advice-tip { margin-bottom: 0.5rem; padding-left: 20px; text-indent: -20px; }
+        /* Style for tips, ensuring they are not bolded but still visible */
+        .advice-tip span { font-weight: bold; color: var(--secondary); }
+        .advice-tip::before { content: '•'; margin-right: 10px; color: var(--secondary); font-weight: bold; }
+        /* COMPARISON TABLE */
+        .comparison-table { width: 100%; border-collapse: collapse; background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.05); margin-top: 2rem; }
+        .comparison-table th { background: var(--secondary); color: white; padding: 15px; text-align: left; }
+        .comparison-table td { padding: 15px; border-bottom: 1px solid #e2e8f0; color: #4a5568; }
+        .comparison-table tr:last-child td { border-bottom: none; }
+        .comparison-table tr:nth-child(even) { background: #f7fafc; }
+        /* LOADING */
+        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .spinner { width: 50px; height: 50px; border: 5px solid #e2e8f0; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <div class="logo">
+                <i class="fas fa-brain"></i> PsyFind
+            </div>
+            <div class="nav-links">
+                <button onclick="showPage('home')">Home</button>
+                <button onclick="showPage('assessment')">Assessment</button>
+                <button onclick="showPage('about')">About & Benchmarks</button>
+            </div>
+        </nav>
+        <div id="home-page" class="page active">
+            <div class="hero">
+                <h1>Understanding Your Mind, One Step at a Time</h1>
+                <p>Welcome to PsyFind. Mental health is a journey, not a destination. Our AI-powered tool is here to help you detect early signs of burnout and depression, providing you with personalized, empathetic guidance to reclaim your balance.</p>
+                <div style="display: flex; gap: 15px; justify-content: center;">
+                    <button class="btn" onclick="showPage('assessment')">Start My Assessment</button>
+                    <button class="btn btn-secondary" onclick="showPage('about')">See How It Works</button>
+                </div>
+            </div>
+            <h2 style="text-align: center; color: var(--secondary); margin-top: 2rem;">Why Choose PsyFind?</h2>
+            <div class="features-container">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-search-plus"></i></div>
+                    <h3>Advanced Detection</h3>
+                    <p>Uses Random Forest ML algorithms trained on clinical data to identify subtle patterns in your responses.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-user-md"></i></div>
+                    <h3>AI Health Advisor</h3>
+                    <p>Our sophisticated LLM Advisor generates personalized, context-aware recommendations just for you.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                    <h3>Private & Secure</h3>
+                    <p>Your data is processed in real-time and never stored permanently. Your privacy is our priority.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-layer-group"></i></div>
+                    <h3>Holistic Analysis</h3>
+                    <p>We analyze 16+ factors including sleep, lifestyle, and emotional text to give a complete picture.</p>
+                </div>
+            </div>
+        </div>
+        <div id="assessment-page" class="page">
+            <div class="form-card">
+                <h2 style="color: var(--secondary); margin-bottom: 1.5rem; text-align: center;">Mental Wellness Assessment</h2>
+                <p style="text-align: center; color: #718096; margin-bottom: 2rem;">Please answer honestly. Your data is not stored.</p>
+                <form id="assessment-form">
+                    <div class="form-grid">
+                        <div class="form-group"><label>Age</label><input type="number" id="age" required min="18"></div>
+                        <div class="form-group"><label>Gender</label>
+                            <select id="gender"><option>Male</option><option>Female</option><option>Other</option></select>
+                        </div>
+                        <div class="form-group"><label>Education</label>
+                            <select id="education"><option>High School</option><option>Bachelor's</option><option>Master's</option><option>PhD</option></select>
+                        </div>
+                        <div class="form-group"><label>Employment</label>
+                            <select id="employment"><option>Employed</option><option>Unemployed</option><option>Student</option></select>
+                        </div>
+                        <div class="form-group"><label>Sleep Hours</label><input type="number" id="sleep_hours" step="0.5" required></div>
+                        <div class="form-group"><label>Substance Use</label>
+                            <select id="substance_use"><option value="none">None</option><option value="occasional">Occasional</option><option value="regular">Regular</option></select>
+                        </div>
+                        <div class="form-group"><label>Family History of Mental Illness</label>
+                            <select id="family_history"><option value="0">No</option><option value="1">Yes</option></select>
+                        </div>
+                        <div class="form-group"><label>Chronic Illness</label>
+                            <select id="chronic_illness"><option value="0">No</option><option value="1">Yes</option></select>
+                        </div>
+                        <div class="form-group"><label>Anxiety Score (0-10)</label><input type="number" id="anxiety_score" max="10" required></div>
+                        <div class="form-group"><label>Stress Level (0-10)</label><input type="number" id="stress_level" max="10" required></div>
+                        <div class="form-group"><label>Financial Stress (0-10)</label><input type="number" id="financial_stress" max="10" required></div>
+                        <div class="form-group"><label>Work Stress (0-10)</label><input type="number" id="work_stress" max="10" required></div>
+                        <div class="form-group"><label>Self-Esteem Score (0-10)</label><input type="number" id="self_esteem" max="10" required></div>
+                        <div class="form-group"><label>Loneliness Score (0-10)</label><input type="number" id="loneliness_score" max="10" required></div>
+                    </div>
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <label>Describe your current state and any specific challenges you are facing.</label>
+                        <textarea id="text_description" rows="4" placeholder="Example: I am overwhelmed by my workload, resulting in insomnia and low motivation. I feel constantly drained." required></textarea>
+                    </div>
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <button type="submit" class="btn">Analyze My Health</button>
+                    </div>
+                </form>
+            </div>
+            <div class="form-card" style="margin-top: 2rem; border-left: 5px solid #fbc2eb; padding: 1.5rem; background: #fffaf0;">
+                <h3 style="color: #c05621; margin-bottom: 0.5rem;"><i class="fas fa-exclamation-triangle"></i> <strong>Important Health Disclaimer</strong></h3>
+                <p style="font-size: 0.95rem;">
+                    <strong>PsyFind is a screening tool, NOT a diagnostic instrument.</strong>
+                    This system provides a predictive risk assessment based on statistical models for educational use only. It is <strong>NOT</strong> a substitute for professional medical advice, diagnosis, or treatment from a licensed mental health professional (therapist or psychiatrist).
+                    Always seek the advice of qualified health providers for any questions regarding your mental health.
+                    If you are in immediate crisis or danger, please use the emergency resources listed on your results page immediately.
+                </p>
+            </div>
+        </div>
+        <div id="results-page" class="page">
+            <h2 style="text-align: center; color: var(--secondary); margin-bottom: 2rem;">Your Analysis</h2>
+            <div class="results-container">
+                <div class="status-card">
+                    <h3>Assessment Result</h3>
+                    <div id="result-status" class="status-badge">Processing...</div>
+                    <h4 style="margin-top: 1.5rem; text-align: left; color: #718096;">Confidence Metrics</h4>
+                    <div id="probability-bars" style="text-align: left; margin-top: 1rem;"></div>
+                    <div style="margin-top: 2rem; background: #fff5f5; padding: 1rem; border-radius: 10px; border: 1px solid #fed7d7;">
+                        <h4 style="color: #c53030; margin-bottom: 0.5rem; text-align: center;"><i class="fas fa-phone-alt"></i> <strong>Emergency & Support Contacts</strong></h4>
+                        <ul style="list-style: none; padding: 0; text-align: left;">
+                            <li style="font-size: 0.9rem;">🆘 <strong>KIRAN Mental Health Helpline (Govt. of India):</strong> 1800-599-0019</li>
+                            <li style="font-size: 0.9rem;">📱 <strong>Tele-Manas (National Mental Health Helpline):</strong> 14416</li>
+                            <li style="font-size: 0.9rem;">💬 <strong>COOJ Mental Health Foundation (Pan-India):</strong> Call +91-832-2252525</li>
+                            <li style="font-size: 0.9rem;">📱 <strong>Fortis Stress Management Helpline (Delhi):</strong> Call +91-8376-804102</li>
+                            <li style="font-size: 0.9rem;">🌐 <strong>Vandrevala Foundation (Mental Health Support):</strong> https://www.vandrevalafoundation.com</li>
+                            <li style="font-size: 0.9rem;">🚨 <strong>National Emergency Number (Police/Ambulance):</strong> 112</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="advisor-card">
+                    <div class="advisor-header">
+                        <div class="advisor-avatar"><i class="fas fa-robot"></i></div>
+                        <div>
+                            <h3 style="color: var(--text);">PsyFind Advisor</h3>
+                            <p style="font-size: 0.9rem; color: #718096;">Personalized Guidance</p>
+                        </div>
+                    </div>
+                    <div id="advisor-content" class="advisor-content">
+                        </div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 2rem;">
+                <button class="btn btn-secondary" onclick="showPage('assessment')">Retake Assessment</button>
+            </div>
+        </div>
+        <div id="about-page" class="page">
+            <div class="form-card">
+                <h2 style="color: var(--secondary); margin-bottom: 1rem;">About PsyFind</h2>
+                <p style="margin-bottom: 1.5rem;">
+                    PsyFind is a <b>professional and reliable tool</b> designed for early mental wellness screening, specifically focusing on the risk of <b>Burnout and Depression</b>. 
+We utilize a sophisticated <b>Hybrid AI Approach</b> to deliver trustworthy and relevant feedback:<ul>
+                   <li> <b>Objective Analysis:</b> A machine learning model (Random Forest) processes your assessment scores and written input to assign a precise risk category.</li> <li><b>Contextual Guidance:</b> A large language model (LLM Advisor) then uses this result to create <b>personalized, practical recommendations</b> that fit your situation.</li>
+</ul> <br>
+                    This dual-system ensures you receive advice that is <b>statistically grounded and easy to act upon</b>. PsyFind is built on advanced research, leveraging <b>Machine Learning</b> and <b>NLP</b> to not just spot risk factors, but truly understand your personal context.
+                </p> <br>
+                <h3 style="color: var(--primary);">Model Evaluation Comparison</h3>
+                <p style="margin-bottom: 1rem; font-size: 0.9rem; color: #718096;">Our core Random Forest classifier is validated against industry standards, showing significant performance gains over simpler models for this multi-class prediction task:</p>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Model</th>
+                            <th>Metric</th>
+                            <th>Interpretation</th>
+                            <th>Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><b>Zero Rule Baseline</b></td>
+                            <td>Accuracy</td>
+                            <td>Absolute minimal threshold. Based on majority class.</td>
+                            <td>0.5016</td>
+                        </tr>
+                        <tr>
+                            <td><b>Logistic Regression</b></td>
+                            <td>Weighted F1-Score</td>
+                            <td>Performance of a simple, linear approach.</td>
+                            <td>0.7768</td>
+                        </tr>
+                        <tr>
+                            <td><b>Random Forest (PsyFind Model)</b></td>
+                            <td>Weighted F1-Score</td>
+                            <td>Jumps in complexity and performance.</td>
+                            <td>0.8213</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div style="margin-top: 2rem;">
+                    <h3 style="color: var(--primary); margin-bottom: 1rem;"><strong>Technology Stack</strong></h3>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <span style="background: #e2e8f0; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem;">Python Flask (Backend)</span>
+                        <span style="background: #e2e8f0; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem;">Random Forest (Core ML Model)</span>
+                        <span style="background: #e2e8f0; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem;">Retrieval-Augmented Generation (RAG)</span>
+                        <span style="background: #e2e8f0; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem;">NLTK (Text Analysis)</span>
+                    </div>
+                </div>
+                <div style="margin-top: 2rem; border-top: 1px solid #e2e8f0; padding-top: 1rem; font-size: 0.85rem; color: #a0aec0;">
+                    Disclaimer: PsyFind is a screening tool, not a diagnostic instrument. Always consult a professional for medical advice.
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="loading" class="loading-overlay">
+        <div style="text-align: center;">
+            <div class="spinner"></div>
+            <p style="margin-top: 1rem; font-weight: 600; color: var(--secondary);">Analyzing your well-being...</p>
+        </div>
+    </div>
+    <script>
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId + '-page').classList.add('active');
+            window.scrollTo(0,0);
+        }
+        document.getElementById('assessment-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            document.getElementById('loading').style.display = 'flex';
+            const formData = {
+                age: document.getElementById('age').value,
+                gender: document.getElementById('gender').value,
+                education: document.getElementById('education').value,
+                employment: document.getElementById('employment').value,
+                sleep_hours: document.getElementById('sleep_hours').value,
+                substance_use: document.getElementById('substance_use').value,
+                family_history: document.getElementById('family_history').value,
+                chronic_illness: document.getElementById('chronic_illness').value,
+                anxiety_score: document.getElementById('anxiety_score').value,
+                stress_level: document.getElementById('stress_level').value,
+                financial_stress: document.getElementById('financial_stress').value,
+                work_stress: document.getElementById('work_stress').value,
+                self_esteem: document.getElementById('self_esteem').value,
+                loneliness_score: document.getElementById('loneliness_score').value,
+                text_description: document.getElementById('text_description').value
+            };
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                const result = await response.json();
+                if(result.error) throw new Error(result.error);
+                displayResults(result);
+                showPage('results');
+            } catch (err) {
+                alert("Error: " + err.message);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        });
+        function displayResults(data) {
+            // 1. Status Badge
+            const statusDiv = document.getElementById('result-status');
+            const pred = data.prediction;
+            let cssClass = pred.includes('Both') ? 'Both' : pred;
+            statusDiv.className = `status-badge status-${cssClass}`;
+            statusDiv.textContent = pred;
+            // 2. Probability Bars
+            const barContainer = document.getElementById('probability-bars');
+            barContainer.innerHTML = '';
+            Object.entries(data.probabilities)
+                .sort(([,a], [,b]) => b - a)
+                .forEach(([label, score]) => {
+                    const displayLabel = label === 'Both' ? 'Both (Burnout and Depression)' : label;
+                    const width = (score * 100).toFixed(1);
+                    const color = {
+                        'Healthy': '#48bb78',
+                        'Depression': '#2b6cb0',
+                        'Burnout': '#c05621',
+                        'Both': '#c53030'
+                    }[label] || '#667eea';
+                    barContainer.innerHTML += 
+                        `<div style="margin-bottom: 0.5rem;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 2px;">
+                                <span>${displayLabel}</span>
+                                <span>${width}%</span>
+                            </div>
+                            <div style="background: #edf2f7; border-radius: 10px; height: 8px; overflow: hidden;">
+                                <div style="background: ${color}; width: ${width}%; height: 100%;"></div>
+                            </div>
+                        </div>`
+                    ;
+                });
+            // 3. LLM Advisor Content (Cohesive Text)
+            const advisorDiv = document.getElementById('advisor-content');
+            const adv = data.advisor_response;
+            // Clean Markdown bolding from LLM output for injection (as done previously)
+            const openingClean = adv.opening.replace(/\*\*/g, '');
+            const closingClean = adv.closing.replace(/\*\*/g, '');
+            let adviceHtml = `<p><strong>${openingClean}</strong></p>`;
+            adv.advice.forEach(tip => {
+                // Split the tip into the bolded part (Area) and the advice text
+                const parts = tip.match(/• \*\*(.*?)\*\*: (.*)/);
+                if (parts && parts.length === 3) {
+                    const area = parts[1];
+                    const adviceText = parts[2];
+                    // Render the area name as bolded text using <span> and the remaining text
+                    // **Change made here to wrap the area and the colon in strong tags for bolding**
+                    adviceHtml += `<p class="advice-tip"><span>${area}:</span> ${adviceText}</p>`;
+                } else {
+                    // Fallback for non-bulleted or non-formatted tips
+                    // **Change made here to wrap the leading text up to the colon in strong tags for bolding**
+                    const match = tip.match(/^(.*?:\s)(.*)/);
+                    if (match) {
+                        adviceHtml += `<p class="advice-tip"><span>${match[1].trim()}:</span> ${match[2].trim()}</p>`;
+                    } else {
+                         adviceHtml += `<p>${tip.replace(/\*\*/g, '')}</p>`;
+                    }
+                   
+                }
+            });
+            adviceHtml += `<p style="margin-top: 1rem; font-style: italic; color: #718096;">${closingClean}</p>`;
+            advisorDiv.innerHTML = adviceHtml;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+# -------------------------------------------------------------------
+# PYTHON SPECIFIC FILES
+# -------------------------------------------------------------------
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environments
+.venv/
+venv/
+env/
+# Pip / Setuptools
+*.egg-info/
+.installed.cfg
+
+# Logs and databases
+*.log
+*.sqlite3
+*.db
+
+# -------------------------------------------------------------------
+# MACHINE LEARNING / MODEL ARTIFACTS
+# -------------------------------------------------------------------
+
+# The HTML mentions a Random Forest model, which is typically saved 
+# as a pickle (.pkl) file or similar. It's usually best practice NOT 
+# to version control large binary model files.
+# If these files are large, un-track them. If they are small and 
+# required for the app to run without re-training, you might commit 
+# them, but generally exclude them.
+
+# Python cache
+_pycache_/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# Data and models (large files)
+data/
+models/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE settings
+.vscode/
+.idea/
+
+# Files created during word processing or research
+*.docx
+*.pdf
