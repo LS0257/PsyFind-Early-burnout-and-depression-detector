@@ -34,86 +34,87 @@ try:
 except Exception as e:
     print(f"Error loading models: {e}")
 # --- 3. KNOWLEDGE BASE (RAG) ---
-# NOTE: Keeping the RAG DB structure the same as it is the source for LLM advice.
+# --- ENHANCED KNOWLEDGE BASE (CONTEXTUALIZED FOR INDIAN USER BASE) ---
 recommendations_db_enhanced = {
     'Depression': {
-        'Professional': [
-            "Consult a licensed mental health therapist (e.g., Cognitive Behavioral Therapy, Dialectical Behavior Therapy, Interpersonal Therapy).",
-            "Book an appointment with a psychiatrist to discuss pharmacological treatment options (medication).",
-            "Utilize digital mental health tools and teletherapy for accessible care.",
-            "Undergo a comprehensive medical check-up to rule out physical causes (e.g., thyroid issues, vitamin deficiencies)."
+        'Get_Help_Now': [
+            "Talk to a licensed mental health professional, like a counsellor or therapist. Ask about options like **'Talk Therapy'** (CBT, DBT).",
+            "See a psychiatrist to discuss if medicine could help you feel better.",
+            "Try **online counseling or teletherapy**—it's often easier and more private than in-person visits.",
+            "Ask your doctor for a **full physical check-up** to ensure no physical issues (like low vitamins or thyroid problems) are making your mood worse."
         ],
-        'Lifestyle': [
-            "Aim for 7-9 hours of consistent, quality sleep (establish a strict, consistent bedtime and 'wind-down' routine).",
-            "Engage in physical activity for at least 30 minutes, 5 days a week (prioritize movement you genuinely enjoy).",
-            "Adopt a Mediterranean-style or whole-foods diet rich in Omega-3s, focusing on unprocessed grains, vegetables, and lean protein.",
-            "Limit alcohol and strictly avoid recreational drugs (these interfere with mood regulation and sleep)."
+        'Daily_Habits': [
+            "Aim for 7 to 9 hours of **good sleep** every night. Try to go to bed and wake up at the same time, even on weekends.",
+            "Move your body for at least 30 minutes, 5 days a week. It doesn't have to be a hard workout—a **simple walk or Yoga** is great.",
+            "Eat healthy foods like vegetables, beans, and whole grains. Focus on **fresh, unprocessed food** to keep your energy steady.",
+            "Limit alcohol and **do not use recreational drugs**—they stop your brain from managing your mood correctly.",
+            "Get outside and see the **sunlight** in the morning; it helps your body clock stay balanced."
         ],
-        'Coping': [
-            "Practice mindfulness and meditation for 10-15 minutes daily (use guided apps if needed).",
-            "Keep a mood journal to track patterns, emotional triggers, and positive events (not just negative ones).",
-            "Connect with friends and family regularly for social support and reduce feelings of isolation.",
-            "Practice Gratitude daily: write down 3 things you are thankful for, no matter how small, to reframe perspective."
+        'Mind_Tools': [
+            "Practice **mindfulness or meditation** for 10-15 minutes daily to calm your mind.",
+            "Start a **simple mood journal** to track when you feel bad, but also write down at least one *good thing* that happened each day.",
+            "Make time to call or meet up with friends and family for **social support**.",
+            "Practice **Gratitude** daily: write down 3 things you are thankful for, no matter how small, to change your view on life."
         ]
     },
     'Burnout': {
-        'Work_Boundaries': [
-            "Set clear boundaries: turn off ALL work notifications after hours and define a strict 'End of Day' ritual.",
-            "Discuss workload, resources, or flexible hours with your supervisor/HR to create a sustainable structure.",
-            "Delegate tasks when possible and learn to politely decline new, non-essential commitments (i.e., establish a 'No List').",
-            "Adopt a 'mono-tasking' mindset; avoid context-switching to increase deep work and efficiency."
+        'Work_Limits': [
+            "Set firm digital boundaries: Define a non-negotiable **workday end time** and commit to **turning off all work-related apps and notifications** thereafter.",
+            "Talk to your manager or HR about **reducing your workload** or changing your hours so you can cope.",
+            "Ask others to do tasks you don't need to do (delegate). **Learn to say 'No' politely** to new, non-essential work.",
+            "Focus on **one task at a time** (mono-tasking); switching between tasks constantly wastes your energy."
         ],
-        'Energy_Management': [
-            "Take micro-breaks (5-10 minutes every hour) for simple stretches or movement away from the screen (e.g., the Pomodoro Technique).",
-            "Ensure adequate sleep and maintain a healthy, regular meal schedule to stabilize blood sugar and energy.",
-            "Take vacation time or a personal day to completely disconnect and recharge (no email checking!).",
-            "Integrate outdoor time (green exercise) into your day, even if it's just a short walk."
+        'Energy_Refresh': [
+            "Take **short breaks** (5-10 minutes) every hour to stand up, stretch, and get away from your screen.",
+            "Make sure you eat **regular, healthy meals** throughout the day to keep your energy levels stable.",
+            "Use your **vacation days or take a personal day** to fully disconnect and recharge (no checking email!).",
+            "Get some **fresh air and green time** every day, even just for a quick walk in the park."
         ],
-        'Stress_Relief': [
-            "Engage in hobbies and activities you enjoy outside of work to rebuild a sense of competence and joy.",
-            "Practice stress management techniques like deep-breathing (Box Breathing) or Progressive Muscle Relaxation (PMR).",
-            "Seek out or join a support group focused on occupational stress or workplace issues.",
-            "Use music or sound therapy (e.g., binaural beats, calming playlists) to induce relaxation during breaks."
+        'Stress_Release': [
+            "Spend time on **hobbies and activities** you genuinely enjoy outside of work to feel successful and happy again.",
+            "Use stress-relief methods like **deep-breathing (Box Breathing)** or relaxing your muscles one by one (PMR).",
+            "Find a **support group** or connect with people who share your job stress.",
+            "Use **calming music or nature sounds** to help you relax during your breaks."
         ]
     },
     'Both': {
         'Immediate_Action': [
-            "Seek immediate professional help for a comprehensive assessment by a specialist (combined therapy/medication is often required).",
-            "Inform a close family member or friend of your condition for accountability and support (an emergency contact).",
-            "Create a crisis plan detailing who to call and what steps to take if thoughts of self-harm arise (e.g., a 24/7 hotline).",
-            "If symptoms are debilitating, evaluate your work situation and consider temporary medical leave (e.g., FMLA)."
+            "Get **professional help right away**. You need an expert to treat both your emotional distress and your overwhelming stress.",
+            "Tell a trusted family member or friend about your condition. They can be your **emergency contact and support buddy**.",
+            "If you have thoughts of self-harm, immediately use the **24/7 helplines** listed on this screen.",
+            "If your symptoms are stopping you from functioning, discuss taking **temporary time off work or study** for medical recovery."
         ],
         'Integrated_Care': [
-            "Prioritize a holistic treatment plan that addresses both emotional distress (Depression) and structural demands (Burnout).",
-            "Practice self-compassion by treating yourself with the same kindness you would offer a friend in distress.",
-            "Work with your therapist/psychiatrist and your HR department (if applicable) for a gradual return-to-work plan.",
-            "Actively challenge cognitive distortions (e.g., all-or-nothing thinking, blaming) common in both states."
+            "Focus on a **full treatment plan** that handles both your low mood (Depression) and your exhaustion (Burnout).",
+            "Be **kind to yourself**. Treat yourself with the same care and patience you would give a friend who is struggling.",
+            "Work with your mental health expert and workplace to create a plan for a **slow and gentle return to work**.",
+            "Actively challenge **negative thoughts** like 'I always fail' or 'It's all my fault'—these thoughts are often incorrect."
         ],
-        'Foundational_Self_Care': [
-            "Establish a simple, structured daily routine focusing on basic needs (meals, hydration, light movement, hygiene).",
-            "Build a strong, reliable support system (professionals, friends, family) and accept help when offered.",
-            "Reduce exposure to high-stress media, including constant news consumption and draining social media feeds.",
-            "Focus on one small, achievable task each day to rebuild a sense of mastery and momentum."
+        'Basic_Self_Care': [
+            "Create a **simple, structured daily plan** focused on your basic needs: eating, drinking water, gentle movement, and getting ready.",
+            "Build a strong and reliable **support system** (experts, friends, family) and **accept help** when it is offered.",
+            "**Reduce time spent on stressful news** or draining social media feeds.",
+            "Focus on completing **one small, easy task** each day to build momentum and feel a sense of achievement."
         ]
     },
     'Healthy': {
-        'Maintenance': [
-            "Continue your current healthy lifestyle and habits, treating them as non-negotiable commitments.",
-            "Schedule regular physical and mental health check-ups (e.g., check-in with your primary care provider annually).",
-            "Maintain a growth mindset by regularly learning new skills or engaging in creative outlets to challenge the mind.",
-            "Document your 'Early Warning Signs' list (e.g., irritability, skipping workouts, poor sleep) and review it monthly."
+        'Stay_Healthy': [
+            "Keep doing your healthy habits—they are your **non-negotiable** commitments to yourself.",
+            "Schedule **regular physical and mental health check-ups** with your doctor every year.",
+            "Keep challenging your mind by **learning new skills** or working on creative projects.",
+            "Write down your **'Early Warning Signs'** list (e.g., getting easily annoyed, skipping workouts) and check it monthly."
         ],
-        'Prevention': [
-            "Incorporate a new stress-busting activity (e.g., learning a skill, pottery, music) to broaden your coping toolkit.",
-            "Regularly review your work-life balance using a weekly audit (e.g., how many hours were purely dedicated to relaxation/self-care).",
-            "Practice proactive digital detoxes—schedule specific blocks of time away from screens and social media.",
-            "Engage in volunteering or acts of kindness to boost a sense of purpose and connection."
+        'Guard_Your_Health': [
+            "Add a **new way to handle stress** to your routine (e.g., learning an art form, playing music, new sport).",
+            "Use a weekly check to **review your work-life balance** (e.g., how many hours did you spend purely on fun and relaxation).",
+            "Plan for **regular screen-free time** away from phones and social media (Digital Detox).",
+            "Do **volunteer work or acts of kindness** to boost your sense of purpose and connection."
         ],
-        'Social_Wellbeing': [
-            "Stay socially connected with loved ones and community (e.g., join a club, take a class).",
-            "Be aware of early warning signs (fatigue, irritability) and address them promptly using your coping skills.",
-            "Nurture your core relationships by scheduling quality, distraction-free time with family and friends.",
-            "Periodically re-evaluate your life goals and values to ensure your actions align with your personal purpose."
+        'Strong_Connections': [
+            "Stay **socially active** with loved ones and community (e.g., join a club or class).",
+            "If you notice early signs of fatigue or stress, **address them right away** using your usual coping skills.",
+            "Make time for quality, **distraction-free time** with your family and friends.",
+            "Every few months, **think about your life goals and values** to make sure your daily actions match what is important to you."
         ]
     }
 }
